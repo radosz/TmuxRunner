@@ -27,9 +27,13 @@ class TmuxRunnerImpl {
      * @param command - Command to run in tmux session
      * @param sessionPrefix - Prefix for session name (optional)
      */
-    TmuxRunnerImpl(String command, String sessionPrefix = "tmux-runner") {
+    TmuxRunnerImpl(String command, String sessionPrefix = "tmux-runner", String sessionId = '') {
         this.command = command
-        this.sessionName = "${sessionPrefix}-${UUID.randomUUID().toString()}"
+        if (sessionId.isBlank()) {
+            this.sessionName = "${sessionPrefix}-${UUID.randomUUID().toString()}"
+        } else {
+            this.sessionName = sessionId
+        }
     }
 
     /**
