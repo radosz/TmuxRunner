@@ -1,0 +1,56 @@
+plugins {
+    id 'groovy'
+    id 'maven-publish'
+}
+
+group = 'com.github.radosz'
+version = '1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Use compileOnly to avoid version conflicts
+    compileOnly localGroovy()
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+sourceSets {
+    main {
+        groovy {
+            srcDirs = ['src/main/groovy']
+        }
+    }
+}
+
+// For JitPack compatibility
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+// Task to copy the main Groovy file to proper location
+task copyGroovyFile(type: Copy) {
+    from 'TmuxRunner.groovy'
+    into 'src/main/groovy'
+}
+
+// Make sure the file is copied before compilation
+compileGroovy.dependsOn copyGroovyFile
+
+// Create the directory structure if it doesn't exist
+task createSourceDirs {
+    doLast {
+        file('src/main/groovy').mkdirs()
+    }
+}
+
+copyGroovyFile.dependsOn createSourceDirs
